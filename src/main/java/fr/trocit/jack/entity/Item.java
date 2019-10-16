@@ -105,15 +105,19 @@ public class Item extends GenericEntity {
 //		for (String category:this.categories) {
 //			categoryArrayNode.add(category);
 //		}
-		
-		ArrayNode likerArrayNode = itemNode.putArray("likers");
-		
-		for (Usr liker:this.likers) {
-			if(liker!=null) {
-				likerArrayNode.add(liker.toJsonNode());
-			}
-		}
+//		
+//		ArrayNode likerArrayNode = itemNode.putArray("likers");
+//		
+//		for (Usr liker:this.likers) {
+//			if(liker!=null) {
+//				likerArrayNode.add(liker.toJsonNode());
+//			}
+//		}
 		
 		return itemNode;
+	}
+	
+	public void addLiker(Usr usr) {
+		this.likers.add(usr);
 	}
 }
