@@ -28,7 +28,7 @@ import fr.trocit.jack.service.UsrService;
 
 @RestController
 @CrossOrigin(origins="http://localhost:4200")
-@RequestMapping("users/{usrId}/items")
+@RequestMapping("users/{usrId}/items") // TODO 
 public class ItemController {
 	
 	@Autowired ItemService serv;
@@ -93,9 +93,10 @@ public class ItemController {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<Integer> updateItem(@RequestBody Item newItem, @PathVariable int id) {
-		if(serv.getById(id)==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		
 		Item currentItem = serv.getById(id);
+		
+		if(currentItem==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		
 		currentItem.setTitle(newItem.getTitle());
 		currentItem.setPhoto(newItem.getPhoto());
