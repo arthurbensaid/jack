@@ -10,9 +10,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Entity
 @Table(name="item")
@@ -81,35 +78,6 @@ public class Item extends GenericEntity {
 		this.likers = likers;
 	}
 
-	
-	public ObjectNode toJsonNode() {
-		
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode itemNode = mapper.createObjectNode();
-		
-		itemNode.put("id", this.id);
-		itemNode.put("title", this.title);
-		itemNode.put("photo", this.photo);
-		itemNode.put("description", this.description);
-//		itemNode.putArray("list");
-//		itemNode.set("list", this.list.toJsonNode());
-//		
-//		ArrayNode categoryArrayNode = itemNode.putArray("categories");
-//		
-//		for (String category:this.categories) {
-//			categoryArrayNode.add(category);
-//		}
-//		
-//		ArrayNode likerArrayNode = itemNode.putArray("likers");
-//		
-//		for (Usr liker:this.likers) {
-//			if(liker!=null) {
-//				likerArrayNode.add(liker.toJsonNode());
-//			}
-//		}
-		
-		return itemNode;
-	}
 	
 	public void addLiker(Usr usr) {
 		this.likers.add(usr);
