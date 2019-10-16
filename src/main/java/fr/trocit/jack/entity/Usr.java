@@ -128,4 +128,8 @@ public class Usr extends GenericEntity {
 		
 		return usrNode;
 	}
+	
+	public void addLikedItem(Item item) {
+		this.likedItems.add(item);
+	}
 }
