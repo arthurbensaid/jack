@@ -103,4 +103,19 @@ public class Usr extends GenericEntity {
 	public void addLikedItem(Item item) {
 		this.likedItems.add(item);
 	}
+	
+	public void removeLikedItem(Item item) {
+		this.likedItems.remove(item);
+	}
+	
+	public Boolean isMatch(Usr otherUsr) {
+		for(Item ourItem:this.giveList.getItems()) {
+			if(ourItem!=null) {
+				for(Usr liker:ourItem.getLikers()) {
+					if(liker.equals(otherUsr)) return true;
+				}
+			}
+		}
+		return false;
+	}
 }

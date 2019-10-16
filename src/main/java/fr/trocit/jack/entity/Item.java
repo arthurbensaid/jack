@@ -83,4 +83,8 @@ public class Item extends GenericEntity {
 	public void addLiker(Usr usr) {
 		this.likers.add(usr);
 	}
+	
+	public void removeLiker(Usr usr) {
+		this.likers.remove(usr);
+	}
 }

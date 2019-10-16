@@ -67,6 +67,20 @@ public class ItemController {
 		return new ResponseEntity<String>(currentUsr.getUsername() + " a liké " + currentItem.getTitle(), HttpStatus.OK);
 	}
 	
+	@PostMapping("items")
+	public ResponseEntity<Boolean> isMatch(@RequestBody String ids) {
+		JsonParser springParser = JsonParserFactory.getJsonParser(); // Parsing du request Body
+		Map<String, Object> map = springParser.parseMap(ids);
+		
+		int itemId = Integer.parseInt(map.get("itemId").toString()); // Extraction des id depuis l'objet JSON
+		int usrId = Integer.parseInt(map.get("userId").toString());
+		
+		Usr currentUsr = usrServ.getById(usrId);
+		Usr otherUsr = serv.getById(itemId).getlist().getOwner();
+		
+		return new ResponseEntity<Boolean>(currentUsr.isMatch(otherUsr), HttpStatus.OK);
+	}
+	
 	@GetMapping("users/{usrId}/items")
 	public ResponseEntity<List<ItemDto>> getMyItems(@PathVariable int usrId) {
 		List<ItemDto> displayList = new ArrayList<ItemDto>();
@@ -128,7 +142,7 @@ public class ItemController {
 	
 	
 	@DeleteMapping("users/{usrId}/items/{id}")
-	public ResponseEntity<String> deleteUsr(@PathVariable int usrId, int id) {
+	public ResponseEntity<String> deleteItem(@PathVariable int usrId, int id) {
 		Item currentItem = serv.getById(id);
 		if(!serv.existItem(currentItem)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		serv.delete(currentItem);
