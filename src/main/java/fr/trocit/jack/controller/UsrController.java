@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import fr.trocit.jack.dto.UsrDto;
 import fr.trocit.jack.entity.GiveList;
 import fr.trocit.jack.entity.Item;
 import fr.trocit.jack.entity.Usr;
@@ -42,24 +39,24 @@ public class UsrController {
 	@Autowired AbstractUsrRepository usrRepo;
 	
 	@GetMapping("")
-	public ResponseEntity<ArrayNode> getAll() {
-		ObjectMapper mapper = new ObjectMapper();
-		ArrayNode displayList = mapper.createArrayNode();
-		
+	public ResponseEntity<List<UsrDto>> getAll() {
+		List<UsrDto> displayList = new ArrayList<UsrDto>();
 		List<Usr> listAll = serv.getAll();
 		
 		for(Usr usr:listAll) {
-			displayList.add(usr.toJsonNode());
+			if(usr!=null) {
+				displayList.add(new UsrDto(usr));
+			}
 		}
 		
-		return new ResponseEntity<ArrayNode>(displayList, HttpStatus.OK);
+		return new ResponseEntity<List<UsrDto>>(displayList, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<ObjectNode> getById(@PathVariable int id) {
+	public ResponseEntity<UsrDto> getById(@PathVariable int id) {
 		Usr usr = serv.getById(id);
 		if(usr==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		return new ResponseEntity<>(usr.toJsonNode(), HttpStatus.OK);
+		return new ResponseEntity<>(new UsrDto(usr), HttpStatus.OK);
 	}
 	
 	@PostMapping

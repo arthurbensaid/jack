@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import fr.trocit.jack.dto.ItemDto;
 import fr.trocit.jack.entity.GiveList;
 import fr.trocit.jack.entity.Item;
 import fr.trocit.jack.entity.Usr;
@@ -38,17 +35,15 @@ public class ItemController {
 	@Autowired UsrService usrServ;
 	
 	@GetMapping("items")
-	public ResponseEntity<ArrayNode> getAll() {
-		ObjectMapper mapper = new ObjectMapper();
-		ArrayNode displayList = mapper.createArrayNode();
-		
+	public ResponseEntity<List<ItemDto>> getAll() {
+		List<ItemDto> displayList = new ArrayList<ItemDto>();
 		List<Item> listAll = serv.getAll();
 		
 		for(Item item:listAll) {
-			displayList.add(item.toJsonNode());
+			displayList.add(new ItemDto(item));
 		}
 		
-		return new ResponseEntity<ArrayNode>(displayList, HttpStatus.OK);
+		return new ResponseEntity<List<ItemDto>>(displayList, HttpStatus.OK);
 	}
 	
 	@PutMapping("items")
@@ -73,26 +68,25 @@ public class ItemController {
 	}
 	
 	@GetMapping("users/{usrId}/items")
-	public ResponseEntity<ArrayNode> getMyItems(@PathVariable int usrId) {
-		ObjectMapper mapper = new ObjectMapper();
-		ArrayNode displayList = mapper.createArrayNode();
+	public ResponseEntity<List<ItemDto>> getMyItems(@PathVariable int usrId) {
+		List<ItemDto> displayList = new ArrayList<ItemDto>();
 		
 		GiveList myList = usrServ.getById(usrId).getGiveList();
 		
 		for(Item item:myList.getItems()) {
-			displayList.add(item.toJsonNode());
+			displayList.add(new ItemDto(item));
 		}
 		
-		return new ResponseEntity<ArrayNode>(displayList, HttpStatus.OK);
+		return new ResponseEntity<List<ItemDto>>(displayList, HttpStatus.OK);
 	}
 	
 	@GetMapping("users/{usrId}/items/{id}")
-	public ResponseEntity<ObjectNode> getById(@PathVariable int usrId, int id) {
+	public ResponseEntity<ItemDto> getById(@PathVariable int usrId, int id) {
 		Item item = serv.getById(id);
 		if(item==null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(item.toJsonNode(), HttpStatus.OK);
+		return new ResponseEntity<>(new ItemDto(item), HttpStatus.OK);
 	}
 	
 	@PostMapping("users/{usrId}/items")
