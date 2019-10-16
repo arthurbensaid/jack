@@ -9,9 +9,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Entity
 @Table(name="givelist")
@@ -40,25 +37,5 @@ public class GiveList extends GenericEntity {
 		this.usrItems = items;
 	}
 	
-	public ObjectNode toJsonNode() {
-		
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode listNode = mapper.createObjectNode();
-		
-		listNode.put("id", this.id);
-		
-//		ArrayNode ownerArrayNode = listNode.putArray("owner");
-//		ownerArrayNode.add(this.owner.toJsonNode());
-
-		ArrayNode itemArrayNode = listNode.putArray("items");
-		
-		for(Item item:this.usrItems) {
-			if(item!=null) {
-				itemArrayNode.add(item.toJsonNode());
-			}
-		}
-		
-		return listNode;
-	}
 }
 	

@@ -10,9 +10,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Entity
 @Table(name="usr")
@@ -102,32 +99,6 @@ public class Usr extends GenericEntity {
 		this.likedItems = likedItems;
 	}
 	
-	public ObjectNode toJsonNode() {
-		
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode usrNode = mapper.createObjectNode();
-		
-		usrNode.put("id", this.id);
-		usrNode.put("username", this.username);
-		usrNode.put("password", this.password);
-		usrNode.put("avatar", this.avatar);
-		usrNode.put("email", this.email);
-		usrNode.put("phone", this.phone);
-		usrNode.put("town", this.town);
-		
-		ArrayNode giveListArrayNode = usrNode.putArray("giveList");
-		giveListArrayNode.add(this.giveList.toJsonNode());
-		
-		ArrayNode likedItemArrayNode = usrNode.putArray("likedItems");
-		
-		for (Item item:this.likedItems) {
-			if(item!=null) {
-				likedItemArrayNode.add(item.toJsonNode());
-			}
-		}
-		
-		return usrNode;
-	}
 	
 	public void addLikedItem(Item item) {
 		this.likedItems.add(item);
