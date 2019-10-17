@@ -1,5 +1,6 @@
 package fr.trocit.jack.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import fr.trocit.jack.dto.UsrDto;
 import fr.trocit.jack.entity.GiveList;
@@ -59,6 +62,53 @@ public class UsrController {
 		return new ResponseEntity<>(new UsrDto(usr), HttpStatus.OK);
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	@PostMapping
+	public ResponseEntity<Integer> createItemPicture(
+			@RequestParam("username") String username,
+			@RequestParam("password") String password,
+			@RequestParam("avatar") MultipartFile avatar,
+			@RequestParam("email") String email,
+			@RequestParam("phone") String phone,
+			@RequestParam("town") String town) throws IOException {
+		try {
+			// Instanciation d'un nouvel item qu'on va remplir avec les données du formulaire
+			Usr usr = new Usr();
+			
+			GiveList list = new GiveList();
+			
+			list.setItems(new ArrayList<Item>());
+			
+			usr.setUsername(username);
+			usr.setPassword(password);
+			usr.setAvatar(avatar.getOriginalFilename());
+			usr.setEmail(email);
+			usr.setPhone(phone);
+			usr.setTown(town);
+			usr.setGiveList(list);
+			usr.setLikedItems(new ArrayList<Item>());
+			
+			int id = serv.save(usr);
+			
+			list.setOwner(usr);
+			
+			listServ.save(list);
+			
+			// Send the picture to the service to save them in a server folder
+			
+			//serv.savePicture(photo);
+			
+			return new ResponseEntity<Integer>(id, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Integer>(HttpStatus.EXPECTATION_FAILED);
+		}
+		
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	/*
 	@PostMapping
 	public ResponseEntity<Integer> createUsr(@RequestBody Usr usr) {
 		
@@ -77,6 +127,7 @@ public class UsrController {
 		
 		return new ResponseEntity<>(id, HttpStatus.CREATED);
 	}
+	*/
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<Integer> updateUsr(@RequestBody Usr newUsr, @PathVariable int id) {

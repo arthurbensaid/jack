@@ -1,5 +1,6 @@
 package fr.trocit.jack.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import fr.trocit.jack.dto.ItemDto;
 import fr.trocit.jack.entity.GiveList;
@@ -81,6 +84,7 @@ public class ItemController {
 		return new ResponseEntity<Boolean>(currentUsr.isMatch(otherUsr), HttpStatus.OK);
 	}
 	
+	
 	@GetMapping("users/{usrId}/items")
 	public ResponseEntity<List<ItemDto>> getMyItems(@PathVariable int usrId) {
 		List<ItemDto> displayList = new ArrayList<ItemDto>();
@@ -103,6 +107,51 @@ public class ItemController {
 		return new ResponseEntity<>(new ItemDto(item), HttpStatus.OK);
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	@PostMapping("users/{usrId}/items")
+	public ResponseEntity<Integer> createItemPicture(@PathVariable int usrId,
+			@RequestParam("title") String title,
+			@RequestParam("photo") MultipartFile photo,
+			@RequestParam("description") String description) throws IOException {
+		try {
+			// Instanciation d'un nouvel item qu'on va remplir avec les données du formulaire
+			Item item = new Item();
+			
+			GiveList giveList = usrServ.getById(usrId).getGiveList();
+			
+			item.setlist(giveList);
+			
+			item.setTitle(title);
+			
+			item.setDescription(description);
+			
+			item.setPhoto(photo.getOriginalFilename());
+			
+			item.setLikers(new ArrayList<Usr>());
+			
+			int id = serv.save(item);
+			
+			List<Item> updatingList = giveList.getItems();
+			
+			updatingList.add(item);
+			
+			giveList.setItems(updatingList);
+			
+			// Send the picture to the service to save them in a server folder
+			
+			//serv.savePicture(photo);
+			
+			return new ResponseEntity<Integer>(id, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Integer>(HttpStatus.EXPECTATION_FAILED);
+		}
+		
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	/*
 	@PostMapping("users/{usrId}/items")
 	public ResponseEntity<Integer> createItem(@RequestBody Item item, @PathVariable int usrId) {
 		
@@ -122,6 +171,7 @@ public class ItemController {
 		
 		return new ResponseEntity<>(id, HttpStatus.CREATED);
 	}
+	*/
 	
 	@PutMapping("users/{usrId}/items/{id}")
 	public ResponseEntity<Integer> updateItem(@RequestBody Item newItem, @PathVariable int usrId, @PathVariable int id) {
