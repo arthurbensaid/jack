@@ -27,7 +27,7 @@ import fr.trocit.jack.service.ItemService;
 import fr.trocit.jack.service.UsrService;
 
 @RestController
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin
 @RequestMapping("") // TODO 
 public class ItemController {
 	
@@ -95,7 +95,7 @@ public class ItemController {
 	}
 	
 	@GetMapping("users/{usrId}/items/{id}")
-	public ResponseEntity<ItemDto> getById(@PathVariable int usrId, int id) {
+	public ResponseEntity<ItemDto> getById(@PathVariable int usrId, @PathVariable int id) {
 		Item item = serv.getById(id);
 		if(item==null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -124,7 +124,7 @@ public class ItemController {
 	}
 	
 	@PutMapping("users/{usrId}/items/{id}")
-	public ResponseEntity<Integer> updateItem(@RequestBody Item newItem, @PathVariable int usrId, int id) {
+	public ResponseEntity<Integer> updateItem(@RequestBody Item newItem, @PathVariable int usrId, @PathVariable int id) {
 		
 		Item currentItem = serv.getById(id);
 		
@@ -142,7 +142,7 @@ public class ItemController {
 	
 	
 	@DeleteMapping("users/{usrId}/items/{id}")
-	public ResponseEntity<String> deleteItem(@PathVariable int usrId, int id) {
+	public ResponseEntity<String> deleteItem(@PathVariable int usrId, @PathVariable int id) {
 		Item currentItem = serv.getById(id);
 		if(!serv.existItem(currentItem)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		serv.delete(currentItem);
