@@ -1,0 +1,16 @@
+version: '3'
+services:
+    webserver:
+        image: nginx:latest
+        container_name: webserver
+        restart: unless-stopped
+        ports:
+            - "81:80"
+        volumes:
+            - ./nginx-conf:/etc/nginx/conf.d
+            - ./src/main/resources/static:/var/www/html
+        networks:
+            - app-networks
+
+networks:
+    app-networks:

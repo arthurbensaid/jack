@@ -140,7 +140,35 @@ public class ItemController {
 			
 			// Send the picture to the service to save them in a server folder
 			
-			//serv.savePicture(photo);
+			serv.savePicture(photo);
+			
+			return new ResponseEntity<Integer>(id, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Integer>(HttpStatus.EXPECTATION_FAILED);
+		}
+		
+	}
+	
+	@PutMapping("users/{usrId}/items/{id}")
+	public ResponseEntity<Integer> updateItemPicture(@PathVariable int id,
+			@RequestParam("title") String title,
+			@RequestParam("photo") MultipartFile photo,
+			@RequestParam("description") String description) throws IOException {
+		try {
+			// Récupération de l'item qu'on va update avec les données du formulaire
+			Item item = serv.getById(id);
+			
+			item.setTitle(title);
+			
+			item.setDescription(description);
+			
+			item.setPhoto(photo.getOriginalFilename());
+			
+			serv.save(item);
+			
+			// Send the picture to the service to save them in a server folder
+			
+			serv.savePicture(photo);
 			
 			return new ResponseEntity<Integer>(id, HttpStatus.OK);
 		} catch (Exception e) {
@@ -173,6 +201,7 @@ public class ItemController {
 	}
 	*/
 	
+	/*
 	@PutMapping("users/{usrId}/items/{id}")
 	public ResponseEntity<Integer> updateItem(@RequestBody Item newItem, @PathVariable int usrId, @PathVariable int id) {
 		
@@ -189,6 +218,8 @@ public class ItemController {
 		
 		return new ResponseEntity<>(id, HttpStatus.OK);
 	}
+	
+	*/
 	
 	
 	@DeleteMapping("users/{usrId}/items/{id}")

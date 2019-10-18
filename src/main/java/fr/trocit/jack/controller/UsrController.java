@@ -97,7 +97,7 @@ public class UsrController {
 			
 			// Send the picture to the service to save them in a server folder
 			
-			//serv.savePicture(photo);
+			serv.savePicture(avatar);
 			
 			return new ResponseEntity<Integer>(id, HttpStatus.OK);
 		} catch (Exception e) {
