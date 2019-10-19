@@ -3,11 +3,8 @@ package fr.trocit.jack.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -62,10 +59,8 @@ public class UsrController {
 		return new ResponseEntity<>(new UsrDto(usr), HttpStatus.OK);
 	}
 	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
 	@PostMapping
-	public ResponseEntity<Integer> createItemPicture(
+	public ResponseEntity<Integer> createUsrPicture(
 			@RequestParam("username") String username,
 			@RequestParam("password") String password,
 			@RequestParam("avatar") MultipartFile avatar,
@@ -106,29 +101,6 @@ public class UsrController {
 		
 	}
 	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	/*
-	@PostMapping
-	public ResponseEntity<Integer> createUsr(@RequestBody Usr usr) {
-		
-		GiveList list = new GiveList();
-		
-		list.setItems(new ArrayList<Item>());
-		
-		usr.setGiveList(list);
-		usr.setLikedItems(new ArrayList<Item>());
-		
-		int id = serv.save(usr);
-		
-		list.setOwner(usr);
-		
-		listServ.save(list);
-		
-		return new ResponseEntity<>(id, HttpStatus.CREATED);
-	}
-	*/
-	
 	@PutMapping("/{id}")
 	public ResponseEntity<Integer> updateUsr(@RequestBody Usr newUsr, @PathVariable int id) {
 		if(serv.getById(id)==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -147,8 +119,6 @@ public class UsrController {
 		return new ResponseEntity<>(id, HttpStatus.OK);
 	}
 	
-	
-	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteUsr(@PathVariable int id) {
 		Usr currentUsr = serv.getById(id);
@@ -166,12 +136,15 @@ public class UsrController {
 		return new ResponseEntity<>("L'utilisateur a bien été supprimmé", HttpStatus.OK);
 	}
 	
-	@PostMapping("/validateLogin") //TODO MDR
-	public ResponseEntity<Integer> authenticateUsr(@RequestBody String login) {
-		System.out.println(login);
-		JsonParser springParser = JsonParserFactory.getJsonParser();
-		Map<String, Object> map = springParser.parseMap(login);
+	@GetMapping("/validateLogin")
+	public ResponseEntity<Integer> authenticateUsr(
+			@RequestParam("username") String username,
+			@RequestParam("password") String password
+			) {
+		Usr validUsr = usrRepo.validateLogin(username, password);
 		
-		return new ResponseEntity<Integer>(usrRepo.validateLogin((String) map.get("username"),(String) map.get("password")).id, HttpStatus.OK);
+		if(validUsr==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
+		return new ResponseEntity<Integer>(validUsr.id, HttpStatus.OK);
 	}
 }

@@ -26,6 +26,7 @@ import fr.trocit.jack.dto.ItemDto;
 import fr.trocit.jack.entity.GiveList;
 import fr.trocit.jack.entity.Item;
 import fr.trocit.jack.entity.Usr;
+import fr.trocit.jack.repository.AbstractItemRepository;
 import fr.trocit.jack.service.ItemService;
 import fr.trocit.jack.service.UsrService;
 
@@ -36,6 +37,7 @@ public class ItemController {
 	
 	@Autowired ItemService serv;
 	@Autowired UsrService usrServ;
+	@Autowired AbstractItemRepository iRepo;
 	
 	@GetMapping("items")
 	public ResponseEntity<List<ItemDto>> getAll() {
@@ -47,6 +49,16 @@ public class ItemController {
 		}
 		
 		return new ResponseEntity<List<ItemDto>>(displayList, HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("items/{id}")
+	public ResponseEntity<ItemDto> getById(@PathVariable int id) {
+		Item item = serv.getById(id);
+		if(item==null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(new ItemDto(item), HttpStatus.OK);
 	}
 	
 	@PutMapping("items")
@@ -98,16 +110,35 @@ public class ItemController {
 		return new ResponseEntity<List<ItemDto>>(displayList, HttpStatus.OK);
 	}
 	
-	@GetMapping("users/{usrId}/items/{id}")
-	public ResponseEntity<ItemDto> getById(@PathVariable int usrId, @PathVariable int id) {
-		Item item = serv.getById(id);
-		if(item==null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	@GetMapping("users/{usrId}/myLikedItems")
+	public ResponseEntity<List<ItemDto>> getMyLikedItems(@PathVariable int usrId) {
+		List<ItemDto> displayList = new ArrayList<ItemDto>();
+		
+		List<Item> likedItems = usrServ.getById(usrId).getLikedItems();
+		
+		for(Item item:likedItems) {
+			displayList.add(new ItemDto(item));
 		}
-		return new ResponseEntity<>(new ItemDto(item), HttpStatus.OK);
+		
+		return new ResponseEntity<List<ItemDto>>(displayList, HttpStatus.OK);
 	}
 	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@GetMapping("items/{usrId}")
+	public ResponseEntity<List<ItemDto>> displayOtherItems(@PathVariable int usrId){
+		int idGiveList = usrServ.getById(usrId).getGiveList().id;
+		
+		System.out.println(idGiveList);
+		
+		List<ItemDto> displayList = new ArrayList<ItemDto>();
+		List<Item> listAll = iRepo.displayOtherItems(idGiveList);
+		
+		for(Item item:listAll) {
+			displayList.add(new ItemDto(item));
+		}
+		
+		return new ResponseEntity<List<ItemDto>>(displayList, HttpStatus.OK);
+	}
+	
 	
 	@PostMapping("users/{usrId}/items")
 	public ResponseEntity<Integer> createItemPicture(@PathVariable int usrId,
@@ -176,51 +207,6 @@ public class ItemController {
 		}
 		
 	}
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	/*
-	@PostMapping("users/{usrId}/items")
-	public ResponseEntity<Integer> createItem(@RequestBody Item item, @PathVariable int usrId) {
-		
-		GiveList giveList = usrServ.getById(usrId).getGiveList();
-		
-		item.setlist(giveList); //TODO create a method in GiveList class to add an item to its List of Items
-		
-		item.setLikers(new ArrayList<Usr>());
-		
-		int id = serv.save(item);
-		
-		List<Item> updatingList = giveList.getItems();
-		
-		updatingList.add(item);
-		
-		giveList.setItems(updatingList);
-		
-		return new ResponseEntity<>(id, HttpStatus.CREATED);
-	}
-	*/
-	
-	/*
-	@PutMapping("users/{usrId}/items/{id}")
-	public ResponseEntity<Integer> updateItem(@RequestBody Item newItem, @PathVariable int usrId, @PathVariable int id) {
-		
-		Item currentItem = serv.getById(id);
-		
-		if(currentItem==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		
-		currentItem.setTitle(newItem.getTitle());
-		currentItem.setPhoto(newItem.getPhoto());
-		currentItem.setDescription(newItem.getDescription());
-		currentItem.setCategories(newItem.getCategories());
-		
-		serv.save(currentItem);
-		
-		return new ResponseEntity<>(id, HttpStatus.OK);
-	}
-	
-	*/
-	
 	
 	@DeleteMapping("users/{usrId}/items/{id}")
 	public ResponseEntity<String> deleteItem(@PathVariable int usrId, @PathVariable int id) {
