@@ -250,6 +250,10 @@ public class ItemController {
 	public ResponseEntity<String> deleteItem(@PathVariable int usrId, @PathVariable int id) {
 		Item currentItem = serv.getById(id);
 		if(!serv.existItem(currentItem)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		for(Usr usr:currentItem.getLikers()) {
+			usr.removeLikedItem(currentItem);
+			usrServ.save(usr);
+		}
 		serv.delete(currentItem);
 		return new ResponseEntity<>("L'item a bien été supprimmé", HttpStatus.OK);
 	}
