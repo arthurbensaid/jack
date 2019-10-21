@@ -27,6 +27,7 @@ import fr.trocit.jack.entity.GiveList;
 import fr.trocit.jack.entity.Item;
 import fr.trocit.jack.entity.Usr;
 import fr.trocit.jack.repository.AbstractItemRepository;
+import fr.trocit.jack.service.EmailService;
 import fr.trocit.jack.service.ItemService;
 import fr.trocit.jack.service.UsrService;
 
@@ -38,6 +39,8 @@ public class ItemController {
 	@Autowired ItemService serv;
 	@Autowired UsrService usrServ;
 	@Autowired AbstractItemRepository iRepo;
+	@Autowired EmailService emailServ;
+
 	
 	@GetMapping("items")
 	public ResponseEntity<List<ItemDto>> getAll() {
@@ -79,8 +82,28 @@ public class ItemController {
 		serv.save(currentItem); // Persistance des changements
 		usrServ.save(currentUsr);
 		
+		String usrNotified = currentItem.getlist().getOwner().getEmail();
+		
+		// this.emailServ.sendSimpleMessage(usrNotified, "Blah", currentUsr.getUsername() + " a liké votre " + currentItem.getTitle());
+		
+		emailServ.sendSimpleMessage("joker.bensaid@gmail.com", "Like", currentUsr.getUsername() + " a liké votre " + currentItem.getTitle());
+		
 		return new ResponseEntity<String>(currentUsr.getUsername() + " a liké " + currentItem.getTitle(), HttpStatus.OK);
 	}
+	
+//	@PostMapping("items")
+//	public ResponseEntity<Boolean> isMatch(@RequestBody String ids) {
+//		JsonParser springParser = JsonParserFactory.getJsonParser(); // Parsing du request Body
+//		Map<String, Object> map = springParser.parseMap(ids);
+//		
+//		int itemId = Integer.parseInt(map.get("itemId").toString()); // Extraction des id depuis l'objet JSON
+//		int usrId = Integer.parseInt(map.get("userId").toString());
+//		
+//		Usr currentUsr = usrServ.getById(usrId);
+//		Usr otherUsr = serv.getById(itemId).getlist().getOwner();
+//		
+//		return new ResponseEntity<Boolean>(currentUsr.isMatch(otherUsr), HttpStatus.OK);
+//	}
 	
 	@PostMapping("items")
 	public ResponseEntity<Boolean> isMatch(@RequestBody String ids) {
@@ -93,7 +116,22 @@ public class ItemController {
 		Usr currentUsr = usrServ.getById(usrId);
 		Usr otherUsr = serv.getById(itemId).getlist().getOwner();
 		
-		return new ResponseEntity<Boolean>(currentUsr.isMatch(otherUsr), HttpStatus.OK);
+		String otherItem = currentUsr.isMatch(otherUsr);
+		if(otherItem != null) {
+			String currentItem = serv.getById(itemId).getTitle();
+			
+//			emailServ.sendSimpleMessage(currentUsr.getEmail(), "Genial, un match !", 
+//					otherUsr.getUsername() + " a liké votre " + otherItem + "et vous son/sa " + currentItem);
+//			emailServ.sendSimpleMessage(otherUsr.getEmail(), "Genial, un match !", 
+//					currentUsr.getUsername() + " a liké votre " + currentItem + "et vous son/sa " + otherItem);
+			
+			emailServ.sendSimpleMessage("kikoko33@gmail.com", "Genial, un match !", 
+					otherUsr.getUsername() + " a liké votre " + otherItem + " et vous son/sa " + currentItem);
+			emailServ.sendSimpleMessage("joker.bensaid@gmail.com", "Genial, un match !", 
+					currentUsr.getUsername() + " a liké votre " + currentItem + " et vous son/sa " + otherItem);
+		}
+		
+		return new ResponseEntity<Boolean>(otherItem != null, HttpStatus.OK);
 	}
 	
 	
@@ -123,7 +161,7 @@ public class ItemController {
 		return new ResponseEntity<List<ItemDto>>(displayList, HttpStatus.OK);
 	}
 	
-	@GetMapping("items/{usrId}")
+	@GetMapping("{usrId}/items")
 	public ResponseEntity<List<ItemDto>> displayOtherItems(@PathVariable int usrId){
 		int idGiveList = usrServ.getById(usrId).getGiveList().id;
 		

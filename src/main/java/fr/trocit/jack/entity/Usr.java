@@ -108,14 +108,25 @@ public class Usr extends GenericEntity {
 		this.likedItems.remove(item);
 	}
 	
-	public Boolean isMatch(Usr otherUsr) {
+//	public Boolean isMatch(Usr otherUsr) {
+//		for(Item ourItem:this.giveList.getItems()) {
+//			if(ourItem!=null) {
+//				for(Usr liker:ourItem.getLikers()) {
+//					if(liker.equals(otherUsr)) return true;
+//				}
+//			}
+//		}
+//		return false;
+//	}
+	
+	public String isMatch(Usr otherUsr) {
 		for(Item ourItem:this.giveList.getItems()) {
 			if(ourItem!=null) {
 				for(Usr liker:ourItem.getLikers()) {
-					if(liker.equals(otherUsr)) return true;
+					if(liker.equals(otherUsr)) return ourItem.getTitle();
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 }
