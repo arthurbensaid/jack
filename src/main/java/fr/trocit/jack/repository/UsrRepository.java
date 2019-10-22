@@ -11,7 +11,6 @@ public class UsrRepository extends CommonRepository<Usr> {
 
 	public UsrRepository(EntityManager entityManager) {
 		super(Usr.class, entityManager);
-		// TODO Auto-generated constructor stub
 	}
 
 }

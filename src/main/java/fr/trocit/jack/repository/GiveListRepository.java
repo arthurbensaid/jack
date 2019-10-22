@@ -11,7 +11,6 @@ public class GiveListRepository extends CommonRepository<GiveList> {
 
 	public GiveListRepository(EntityManager entityManager) {
 		super(GiveList.class, entityManager);
-		// TODO Auto-generated constructor stub
 	}
 
 }

@@ -82,28 +82,12 @@ public class ItemController {
 		serv.save(currentItem); // Persistance des changements
 		usrServ.save(currentUsr);
 		
-		String usrNotified = currentItem.getlist().getOwner().getEmail();
+		Usr usrNotified = currentItem.getlist().getOwner();
 		
-		// this.emailServ.sendSimpleMessage(usrNotified, "Blah", currentUsr.getUsername() + " a liké votre " + currentItem.getTitle());
-		
-		emailServ.sendSimpleMessage("joker.bensaid@gmail.com", "Like", currentUsr.getUsername() + " a liké votre " + currentItem.getTitle());
+		emailServ.sendSimpleMessage(usrNotified.getEmail(), "Blah", currentUsr.getUsername() + " a liké votre " + currentItem.getTitle());
 		
 		return new ResponseEntity<String>(currentUsr.getUsername() + " a liké " + currentItem.getTitle(), HttpStatus.OK);
 	}
-	
-//	@PostMapping("items")
-//	public ResponseEntity<Boolean> isMatch(@RequestBody String ids) {
-//		JsonParser springParser = JsonParserFactory.getJsonParser(); // Parsing du request Body
-//		Map<String, Object> map = springParser.parseMap(ids);
-//		
-//		int itemId = Integer.parseInt(map.get("itemId").toString()); // Extraction des id depuis l'objet JSON
-//		int usrId = Integer.parseInt(map.get("userId").toString());
-//		
-//		Usr currentUsr = usrServ.getById(usrId);
-//		Usr otherUsr = serv.getById(itemId).getlist().getOwner();
-//		
-//		return new ResponseEntity<Boolean>(currentUsr.isMatch(otherUsr), HttpStatus.OK);
-//	}
 	
 	@PostMapping("items")
 	public ResponseEntity<Boolean> isMatch(@RequestBody String ids) {
@@ -120,15 +104,10 @@ public class ItemController {
 		if(otherItem != null) {
 			String currentItem = serv.getById(itemId).getTitle();
 			
-//			emailServ.sendSimpleMessage(currentUsr.getEmail(), "Genial, un match !", 
-//					otherUsr.getUsername() + " a liké votre " + otherItem + "et vous son/sa " + currentItem);
-//			emailServ.sendSimpleMessage(otherUsr.getEmail(), "Genial, un match !", 
-//					currentUsr.getUsername() + " a liké votre " + currentItem + "et vous son/sa " + otherItem);
-			
-			emailServ.sendSimpleMessage("kikoko33@gmail.com", "Genial, un match !", 
-					otherUsr.getUsername() + " a liké votre " + otherItem + " et vous son/sa " + currentItem);
-			emailServ.sendSimpleMessage("joker.bensaid@gmail.com", "Genial, un match !", 
-					currentUsr.getUsername() + " a liké votre " + currentItem + " et vous son/sa " + otherItem);
+			emailServ.sendSimpleMessage(currentUsr.getEmail(), "Genial, un match !", 
+					otherUsr.getUsername() + " a liké votre " + otherItem + "et vous son/sa " + currentItem);
+			emailServ.sendSimpleMessage(otherUsr.getEmail(), "Genial, un match !", 
+					currentUsr.getUsername() + " a liké votre " + currentItem + "et vous son/sa " + otherItem);
 		}
 		
 		return new ResponseEntity<Boolean>(otherItem != null, HttpStatus.OK);

@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.trocit.jack.entity.GiveList;
-import fr.trocit.jack.repository.CommonRepository;
+import fr.trocit.jack.repository.GiveListRepository;
 
 @Service
 public class GiveListService {
 	
-	@Autowired CommonRepository<GiveList> repo;
+	@Autowired GiveListRepository repo;
 	
 	public List<GiveList> getAll() {
 		return repo.getAll();

@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.trocit.jack.entity.Usr;
-import fr.trocit.jack.repository.CommonRepository;
+import fr.trocit.jack.repository.UsrRepository;
 
 @Service
 public class UsrService {
 	
-	@Autowired CommonRepository<Usr> repo;
+	@Autowired UsrRepository repo;
 	
 	private final Path rootLocation = Paths.get("src/main/resources/static");
 	

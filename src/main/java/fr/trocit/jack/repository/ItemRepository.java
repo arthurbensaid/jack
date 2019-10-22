@@ -11,7 +11,6 @@ public class ItemRepository extends CommonRepository<Item> {
 
 	public ItemRepository(EntityManager entityManager) {
 		super(Item.class, entityManager);
-		// TODO Auto-generated constructor stub
 	}
 
 }
