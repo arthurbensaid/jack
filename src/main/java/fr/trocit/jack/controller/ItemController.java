@@ -141,7 +141,7 @@ public class ItemController {
 	}
 	
 	@GetMapping("{usrId}/items")
-	public ResponseEntity<List<ItemDto>> displayOtherItems(@PathVariable int usrId){
+	public ResponseEntity<List<ItemDto>> getOtherItems(@PathVariable int usrId){
 		int idGiveList = usrServ.getById(usrId).getGiveList().id;
 		
 		System.out.println(idGiveList);
